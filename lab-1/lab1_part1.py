@@ -1,5 +1,5 @@
 # student name: Kyle Groulx
-# student number: 95104774d
+# student number: 95104774
 
 # A command-line 2048 game
 
@@ -69,14 +69,10 @@ def addANewTwoToBoard() -> None:
     randRow, randCol = random.choice(empty_cells)
     board[randRow][randCol] = 2
 
-
-
-
 def isFull() -> bool:
     """ 
         returns True if no empty cell is left, False otherwise 
     """
-
     # Iterate through the board and check for any empty cells
     for row in board:
         for cell in row:
@@ -86,10 +82,8 @@ def isFull() -> bool:
     # No empty cells found
     return True
 
-
-
 def getCurrentScore() -> int:
-    """ 
+    """
         calculates and returns the current score
         the score is the sum of all the numbers currently on the board
     """
@@ -101,19 +95,20 @@ def getCurrentScore() -> int:
 
     return score
 
-
-
 def updateTheBoardBasedOnTheUserMove(move: str) -> None:
     """
         updates the board variable based on the move argument by sliding and merging
         the move argument is either 'W', 'A', 'S', or 'D'
         directions: W for up; A for left; S for down, and D for right
     """
+    # Steps to update each board
+    # 1. For each row/col (depending on WASD). Get a list that contains the row/col WITHOUT any empty cells
+    # 2. Iterate through the list and merge any cells that are the same number and adjacent to each other
+    # 3. Pad the front or end of the list with empty cells (depending on WASD)
+
     if move == 'A':  # left
-        for r in range(4):
-            # get 
-            line = [cell for cell in board[r] if cell != '']
-            # merge
+        for row in range(4):
+            line = [cell for cell in board[row] if cell != '']
             merged = []
             i = 0
             while i < len(line):
@@ -123,13 +118,12 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
                 else:
                     merged.append(line[i])
                     i += 1
-            # pad
             merged += [''] * (4 - len(merged))
-            board[r] = merged
+            board[row] = merged
 
     elif move == 'D':  # right
-        for r in range(4):
-            line = [cell for cell in board[r] if cell != '']
+        for row in range(4):
+            line = [cell for cell in board[row] if cell != '']
             line.reverse()
             merged = []
             i = 0
@@ -142,14 +136,14 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
                     i += 1
             merged += [''] * (4 - len(merged))
             merged.reverse()
-            board[r] = merged
+            board[row] = merged
 
     elif move == 'W':  # up
-        for c in range(4):
+        for col in range(4):
             line = []
-            for r in range(4):
-                if board[r][c] != '':
-                    line.append(board[r][c])
+            for row in range(4):
+                if board[row][col] != '':
+                    line.append(board[row][col])
             merged = []
             i = 0
             while i < len(line):
@@ -160,15 +154,15 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
                     merged.append(line[i])
                     i += 1
             merged += [''] * (4 - len(merged))
-            for r in range(4):
-                board[r][c] = merged[r]
+            for row in range(4):
+                board[row][col] = merged[row]
 
     elif move == 'S':  # down
-        for c in range(4):
+        for col in range(4):
             line = []
-            for r in range(4):
-                if board[r][c] != '':
-                    line.append(board[r][c])
+            for row in range(4):
+                if board[row][col] != '':
+                    line.append(board[row][col])
             line.reverse()
             merged = []
             i = 0
@@ -181,8 +175,8 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
                     i += 1
             merged += [''] * (4 - len(merged))
             merged.reverse()
-            for r in range(4):
-                board[r][c] = merged[r]
+            for row in range(4):
+                board[row][col] = merged[row]
 
 
 #up to two new functions allowed to be added (if needed)
