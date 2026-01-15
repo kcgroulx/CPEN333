@@ -1,0 +1,209 @@
+# student name: Kyle Groulx
+# student number: 95104774d
+
+# A command-line 2048 game
+
+import random
+
+board: list[list] = []  # a 2-D list to keep the current status of the game board
+
+def init() -> None:  # Use as is
+    """ 
+        initializes the board variable
+        and prints a welcome message
+    """
+    # initialize the board cells with ''
+    for _ in range(4):     
+        rowList = []
+        for _ in range(4):
+            rowList.append('')
+        board.append(rowList)
+    # add two starting 2's at random cells
+    twoRandomNumbers = random.sample(range(16), 2)   # randomly choose two numbers between 0 and 15   
+    # correspond each of the two random numbers to the corresponding cell
+    twoRandomCells = ((twoRandomNumbers[0]//4,twoRandomNumbers[0]%4),
+                      (twoRandomNumbers[1]//4,twoRandomNumbers[1]%4))
+    for cell in twoRandomCells:  # put a 2 on each of the two chosen random cells
+        board[cell[0]][cell[1]] = 2
+
+    print(); print("Welcome! Let's play the 2048 game."); print()
+
+
+def displayGame() -> None:  # Use as is
+    """ displays the current board on the console """
+    print("+-----+-----+-----+-----+")
+    for row in range(4): 
+        for column in range(4):
+            cell = board[row][column] 
+            print(f"|{str(cell).center(5)}", end="")
+        print("|")
+        print("+-----+-----+-----+-----+")
+
+
+def promptGamerForTheNextMove() -> str: # Use as is
+    """
+        prompts the gamer until a valid next move or Q (to quit) is selected
+        (valid move direction: one of 'W', 'A', 'S' or 'D')
+        returns the user input
+    """
+    print("Enter one of WASD (move direction) or Q (to quit)")
+    while True:  # prompt until a valid input is entered
+        move = input('> ').upper()
+        if move in ('W', 'A', 'S', 'D', 'Q'): # a valid move direction or 'Q'
+            break
+        print('Enter one of "W", "A", "S", "D", or "Q"') # otherwise inform the user about valid input
+    return move
+
+def addANewTwoToBoard() -> None:
+    """ 
+        adds a new 2 at an available randomly-selected cell of the board
+    """
+    # Iterate through the board and get all empty cells
+    empty_cells = []
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            if board[row][col] == '':
+                empty_cells.append((row, col))
+
+    # Randomly select an empty cell and set it to 2
+    randRow, randCol = random.choice(empty_cells)
+    board[randRow][randCol] = 2
+
+
+
+
+def isFull() -> bool:
+    """ 
+        returns True if no empty cell is left, False otherwise 
+    """
+
+    # Iterate through the board and check for any empty cells
+    for row in board:
+        for cell in row:
+            if cell == '':
+                return False
+            
+    # No empty cells found
+    return True
+
+
+
+def getCurrentScore() -> int:
+    """ 
+        calculates and returns the current score
+        the score is the sum of all the numbers currently on the board
+    """
+    score = 0
+    for row in board:
+        for cell in row:
+            if cell != '':
+                score += cell
+
+    return score
+
+
+
+def updateTheBoardBasedOnTheUserMove(move: str) -> None:
+    """
+        updates the board variable based on the move argument by sliding and merging
+        the move argument is either 'W', 'A', 'S', or 'D'
+        directions: W for up; A for left; S for down, and D for right
+    """
+    if move == 'A':  # left
+        for r in range(4):
+            # get 
+            line = [cell for cell in board[r] if cell != '']
+            # merge
+            merged = []
+            i = 0
+            while i < len(line):
+                if i + 1 < len(line) and line[i] == line[i + 1]:
+                    merged.append(line[i] * 2)
+                    i += 2
+                else:
+                    merged.append(line[i])
+                    i += 1
+            # pad
+            merged += [''] * (4 - len(merged))
+            board[r] = merged
+
+    elif move == 'D':  # right
+        for r in range(4):
+            line = [cell for cell in board[r] if cell != '']
+            line.reverse()
+            merged = []
+            i = 0
+            while i < len(line):
+                if i + 1 < len(line) and line[i] == line[i + 1]:
+                    merged.append(line[i] * 2)
+                    i += 2
+                else:
+                    merged.append(line[i])
+                    i += 1
+            merged += [''] * (4 - len(merged))
+            merged.reverse()
+            board[r] = merged
+
+    elif move == 'W':  # up
+        for c in range(4):
+            line = []
+            for r in range(4):
+                if board[r][c] != '':
+                    line.append(board[r][c])
+            merged = []
+            i = 0
+            while i < len(line):
+                if i + 1 < len(line) and line[i] == line[i + 1]:
+                    merged.append(line[i] * 2)
+                    i += 2
+                else:
+                    merged.append(line[i])
+                    i += 1
+            merged += [''] * (4 - len(merged))
+            for r in range(4):
+                board[r][c] = merged[r]
+
+    elif move == 'S':  # down
+        for c in range(4):
+            line = []
+            for r in range(4):
+                if board[r][c] != '':
+                    line.append(board[r][c])
+            line.reverse()
+            merged = []
+            i = 0
+            while i < len(line):
+                if i + 1 < len(line) and line[i] == line[i + 1]:
+                    merged.append(line[i] * 2)
+                    i += 2
+                else:
+                    merged.append(line[i])
+                    i += 1
+            merged += [''] * (4 - len(merged))
+            merged.reverse()
+            for r in range(4):
+                board[r][c] = merged[r]
+
+
+#up to two new functions allowed to be added (if needed)
+#as usual, they must be documented well
+#they have to be placed below this line
+
+
+if __name__ == "__main__":  # Use as is  
+    init()
+    displayGame()
+    while True:  # Super-loop for the game
+        print(f"Score: {getCurrentScore()}")
+        userInput = promptGamerForTheNextMove()
+        if(userInput == 'Q'):
+            print("Exiting the game. Thanks for playing!")
+            break
+        updateTheBoardBasedOnTheUserMove(userInput)
+        addANewTwoToBoard()
+        displayGame()
+
+        if isFull(): #game is over once all cells are taken
+            print("Game is Over. Check out your score.")
+            print("Thanks for playing!")
+            break
