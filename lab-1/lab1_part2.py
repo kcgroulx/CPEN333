@@ -42,16 +42,16 @@ def displayGame() -> None:  # Use as is
 
 def promptGamerForTheNextMove() -> str: # Use as is
     """
-        prompts the gamer until a valid next move or Q (to quit) is selected
+        prompts the gamer until a valid next move or Q (to quit) or E (to shuffle) is selected
         (valid move direction: one of 'W', 'A', 'S' or 'D')
         returns the user input
     """
-    print("Enter one of WASD (move direction) or Q (to quit)")
+    print("Enter one of WASD (move direction) or Q (to quit) or E (to shuffle board)")
     while True:  # prompt until a valid input is entered
         move = input('> ').upper()
-        if move in ('W', 'A', 'S', 'D', 'Q'): # a valid move direction or 'Q'
+        if move in ('W', 'A', 'S', 'D', 'Q', 'E'): # a valid move direction or 'Q'
             break
-        print('Enter one of "W", "A", "S", "D", or "Q"') # otherwise inform the user about valid input
+        print('Enter one of "W", "A", "S", "D", or "Q" or "E" to shuffle') # otherwise inform the user about valid input
     return move
 
 def addANew2Or4ToBoard() -> None:
@@ -91,8 +91,9 @@ def addANew2Or4ToBoard() -> None:
                 largest_difference = smallest_difference
                 row, col = r, c
 
-    # Set the new value at the found row and col
-    board[row][col] = new_value
+    # Set the new value at the found row and col if they are found (board has some empty cells)
+    if row is not None and col is not None:
+        board[row][col] = new_value
 
 
 def isFullAndNoValidMove() -> bool:
@@ -133,24 +134,19 @@ def getCurrentScore() -> int:
 
     return score
 
-def updateTheBoardBasedOnTheUserMove(move: str) -> bool:
+def updateTheBoardBasedOnTheUserMove(move: str):
     """
         updates the board variable based on the move argument by sliding and merging
         the move argument is either 'W', 'A', 'S', or 'D'
         directions: W for up; A for left; S for down, and D for right
 
-        Returns True if the board changed after the move, returns False if the board did NOT change after the move.
-        False indicates an invalid move and a new 2 or 4 should NOT be generated after!
     """
-    # Create copy of board to compare with board after applying the move
-    board_copy = [row[:] for row in board]
-
     # Steps to update each board
     # 1. For each row/col (depending on WASD). Get a list that contains the row/col WITHOUT any empty cells
     # 2. Iterate through the list and merge any cells that are the same number and adjacent to each other
     # 3. Pad the front or end of the list with empty cells (depending on WASD)
 
-    if move == 'A':  # left
+    if move == 'A': # left
         for row in range(4):
             line = [cell for cell in board[row] if cell != '']
             merged = []
@@ -164,11 +160,10 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> bool:
                     cell += 1
             merged += [''] * (4 - len(merged))
             board[row] = merged
-
-    elif move == 'D':  # right
+    elif move == 'D': # right
         for row in range(4):
             line = [cell for cell in board[row] if cell != '']
-            line.reverse()
+            line.reverse() # Reverse since we are shifting from left to right
             merged = []
             cell = 0
             while cell < len(line):
@@ -179,10 +174,9 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> bool:
                     merged.append(line[cell])
                     cell += 1
             merged += [''] * (4 - len(merged))
-            merged.reverse()
+            merged.reverse() # Reverse again to proper order
             board[row] = merged
-
-    elif move == 'W':  # up
+    elif move == 'W': # up
         for col in range(4):
             line = []
             for row in range(4):
@@ -200,8 +194,7 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> bool:
             merged += [''] * (4 - len(merged))
             for row in range(4):
                 board[row][col] = merged[row]
-
-    elif move == 'S':  # down
+    elif move == 'S': # down
         for col in range(4):
             line = []
             for row in range(4):
@@ -221,14 +214,25 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> bool:
             merged.reverse()
             for row in range(4):
                 board[row][col] = merged[row]
-
-    # Return True if the board has changed and the move, otherwise return False
-    return True if board != board_copy else False
 
 
 #up to two new functions allowed to be added (if needed)
 #as usual, they must be documented well
 #they have to be placed below this line
+
+def shuffleBoard() -> None:
+    """
+        Randomly shuffles all values on the board
+        This allows user to possible get out of a position if they are stuck
+    """
+    # Flatten board into single list and shuffle it randomly
+    flattenBoard = [cell for row in board for cell in row]
+    random.shuffle(flattenBoard)
+
+    # Iterate through the board and set it to the flattened shuffled list
+    for row in range(len(board)):
+        for col in range(len(board[0])):
+            board[row][col] = flattenBoard[row * 4 + col]
 
 
 if __name__ == "__main__":  # Use as is  
@@ -240,10 +244,12 @@ if __name__ == "__main__":  # Use as is
         if(userInput == 'Q'):
             print("Exiting the game. Thanks for playing!")
             break
+
+        if(userInput == "E"):
+            shuffleBoard()
         
-        # We only add a new 2 or 4 if the user move was successful
-        if updateTheBoardBasedOnTheUserMove(userInput):
-            addANew2Or4ToBoard()
+        updateTheBoardBasedOnTheUserMove(userInput)
+        addANew2Or4ToBoard()
 
         displayGame()
 
