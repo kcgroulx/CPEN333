@@ -95,7 +95,7 @@ class GUI:
         this class implements the GUI for our program
         use as is.
         The add, subtract, multiply and divide methods invoke the corresponding
-        methods from the Rational class to calculate the result to display.
+        methods from the ComplexNumber class to calculate the result to display.
     """
     def __init__(self):
         """ 
@@ -106,7 +106,7 @@ class GUI:
         window.title("Complex Numbers")
         window.geometry("190x180")
        
-        # Labels and entries for the first complex rational number
+        # Labels and entries for the first complex number
         frame1 = Frame(window)
         frame1.grid(row = 1, column = 1, pady = 10)
 
@@ -120,10 +120,10 @@ class GUI:
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
         Label(frame1, text = "i").pack(side = LEFT)
         
-        # Labels and entries for the second rational number
+        # Labels and entries for the second complex number
         frame2 = Frame(window)
         frame2.grid(row = 3, column = 1, pady = 10)
-        Label(frame2, text = "Rational 2:").pack(side = LEFT)
+        Label(frame2, text = "Complex 2:").pack(side = LEFT)
         self.complex2Real = StringVar()
         Entry(frame2, width = 4, textvariable = self.complex2Real, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
