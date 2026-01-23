@@ -6,6 +6,12 @@ from __future__ import annotations  #helps with type hints
 from tkinter import *
 #do not import any more modules
 
+
+class ComplexNumber:
+    def __init__(self, real: int, imaginary: int) -> None:
+        self.real = real
+        self.imaginary = imaginary
+
 #do not change the skeleton of the program. Only add code where it is requested. 
 class Rational:
     """ 
@@ -112,31 +118,48 @@ class GUI:
         """
         window = Tk()
         window.title("Rational Numbers")
-        window.geometry("190x180")
+        window.geometry("300x180")
        
-        # Labels and entries for the first rational number
+        # Labels and entries for the first complex rational number
         frame1 = Frame(window)
         frame1.grid(row = 1, column = 1, pady = 10)
+
         Label(frame1, text = "Rational 1:").pack(side = LEFT)
         self.rational1Numerator = StringVar()
-        Entry(frame1, width = 5, textvariable = self.rational1Numerator, 
+        Entry(frame1, width = 4, textvariable = self.rational1Numerator, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame1, text = "+").pack(side = LEFT)
+        Entry(frame1, width = 4, textvariable = self.rational1Numerator, 
+              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame1, text = "i").pack(side = LEFT)
         Label(frame1, text = "/").pack(side = LEFT)
         self.rational1Denominator = StringVar()
-        Entry(frame1, width = 5, textvariable = self.rational1Denominator, 
+        Entry(frame1, width = 4, textvariable = self.rational1Denominator, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame1, text = "+").pack(side = LEFT)
+        Entry(frame1, width = 4, textvariable = self.rational1Denominator, 
+              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame1, text = "i").pack(side = LEFT)
         
         # Labels and entries for the second rational number
         frame2 = Frame(window)
         frame2.grid(row = 3, column = 1, pady = 10)
         Label(frame2, text = "Rational 2:").pack(side = LEFT)
         self.rational2Numerator = StringVar()
-        Entry(frame2, width = 5, textvariable = self.rational2Numerator, 
+        Entry(frame2, width = 4, textvariable = self.rational2Numerator, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame2, text = "+").pack(side = LEFT)
+        Entry(frame2, width = 4, textvariable = self.rational2Numerator, 
+              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame2, text = "i").pack(side = LEFT)
         Label(frame2, text = "/").pack(side = LEFT)
         self.rational2Denominator = StringVar()
-        Entry(frame2, width = 5, textvariable = self.rational2Denominator, 
+        Entry(frame2, width = 4, textvariable = self.rational2Denominator, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame2, text = "+").pack(side = LEFT)
+        Entry(frame2, width = 4, textvariable = self.rational2Numerator, 
+              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
+        Label(frame2, text = "i").pack(side = LEFT)
         
         # Labels and entries for the result rational number
         # an entry widget is used as the output here
