@@ -6,103 +6,89 @@ from __future__ import annotations  #helps with type hints
 from tkinter import *
 #do not import any more modules
 
-
 class ComplexNumber:
-    def __init__(self, real: int, imaginary: int) -> None:
-        self.real = real
-        self.imaginary = imaginary
-
-#do not change the skeleton of the program. Only add code where it is requested. 
-class Rational:
     """ 
-        this class implements the rational number type 
-        it stores the rational number in its lowest from
+        this class implements the complex number type 
         two data fields: 
-            numerator and denominator
-            (numerator stores the sign of the rational)
+            real and imag (imaginary)
         Operation: 
             add, subtract, multiply and divide
             toString
     """
-    def __init__(self, numerator: int, denominator: int) -> None:
-        """ initializer stores the rational number in the lowest form """ 
-        def greatestCommonDivisor(n: int, d: int):
-            """ local method for the greatest common divisor calculation """
-            n1 = abs(n)
-            d1 = abs(d)
-            result = 1
-            k=1
-            while k <= n1 and k <= d1:
-                if n1 % k == 0 and d1 % k == 0:
-                    result = k
-                k += 1
-            return result
-        #rational number must be in the lowest form (numerator and denominator have no other common factor other than 1)
-        gcd: int = greatestCommonDivisor(numerator, denominator)
-        #numerator stores the sign of the rational
-        signFactor: int = 1 if denominator > 0 else -1
-        self.numerator = signFactor * numerator // gcd
-        self.denominator = abs(denominator) // gcd
+    def __init__(self, real: float, imag: float) -> None:
+        self.real = real
+        self.imag = imag
     
-    def add(self, secondRational: Rational) -> Rational:
+    def add(self, secondComplex: ComplexNumber) -> ComplexNumber:
         """
-           adds 'this' rational to secondRational
-           returns the result as a rational number (type Rational)
+           adds 'this' complex to secondComplex
+           returns the result as a complex number (type ComplexNumber)
         """
-        numerator = self.numerator * secondRational.denominator + self.denominator * secondRational.numerator
-        denominator = self.denominator * secondRational.denominator
-        num = Rational(numerator=numerator, denominator=denominator)
+        real = self.real + secondComplex.real
+        imag = self.imag + secondComplex.imag
+        num = ComplexNumber(real=real, imag=imag)
         return num
     
-    def subtract(self, secondRational: Rational) -> Rational:
+    def subtract(self, secondComplex: ComplexNumber) -> ComplexNumber:
         """
-           subtracts secondRational from 'this' rational to 
-           returns the result as a rational number (type Rational)
-        """ 
-        numerator = self.numerator * secondRational.denominator - self.denominator * secondRational.numerator
-        denominator = self.denominator * secondRational.denominator
-        num = Rational(numerator=numerator, denominator=denominator)
+           subtracts secondComplex from 'this' complex to 
+           returns the result as a complex number (type complex)
+        """
+        real = self.real - secondComplex.real
+        imag = self.imag - secondComplex.imag
+        num = ComplexNumber(real=real, imag=imag)
         return num
 
-    def multiply(self, secondRational: Rational) -> Rational:
+    def multiply(self, secondComplex: ComplexNumber) -> ComplexNumber:
         """
-           multiplies 'this' rational to secondRational
-           returns the result as a rational number (type Rational)
+           multiplies 'this' complex to secondComplex
+           returns the result as a complex number (type ComplexNumber)
         """ 
-        numerator = self.numerator * secondRational.numerator
-        denominator = self.denominator * secondRational.denominator
-        num = Rational(numerator=numerator, denominator=denominator)
-        return num
+        real = (self.real * secondComplex.real) - (self.imag * secondComplex.imag)
+        imag = (self.real * secondComplex.imag) + (self.imag * secondComplex.real)
+        return ComplexNumber(real=real, imag=imag)
 
-    def divide(self, secondRational: Rational) -> Rational:
+
+    def divide(self, secondComplex: ComplexNumber) -> ComplexNumber:
         """
-           divides 'this' rational by secondRational
-           returns the result as a rational number (type Rational)
+           divides 'this' complex by secondComplex
+           returns the result as a complex number (type ComplexNumber)
         """ 
-        numerator = self.numerator * secondRational.denominator
-        denominator = self.denominator * secondRational.numerator
-        num = Rational(numerator=numerator, denominator=denominator)
-        return num
+        denominator = (secondComplex.real ** 2) + (secondComplex.imag ** 2)
+        real = ((self.real * secondComplex.real) + (self.imag * secondComplex.imag)) / denominator
+        imag = ((self.imag * secondComplex.real) - (self.real * secondComplex.imag)) / denominator
+        return ComplexNumber(real=real, imag=imag)
 
     def toString(self) -> str:
         """             
-            returns a string representation of 'this' rational
-            the general output format is: numerator/denominator
-            especial cases:
-                if 'this' rational is an integer, it must not show any denominator 
-                if denominator is 0, it returns "NaN" (not a number)
-                if numerator or the denominator is not an integer, it returns "NaN"
-        """ 
+            returns a string representation of 'this' complex number
+            the general output format is: {real} + {imag} i
 
-        # Check if rational is an integer
-        if self.denominator == 1 or self.numerator == 0:
-            return f"{self.numerator}"
-        # Check if denominatior is 0
-        elif self.denominator == 0:
-            return "NaN"
-        # Otherwise return number normally
-        else:
-            return f"{self.numerator}/{self.denominator}"
+            Special Cases:
+                - Both real and imag are 0: Return 0
+                - real is 0: Only show imag
+                - imag is 0: Only show real
+                - imag is 1/-1: Don't show coefficient infront of i
+        """
+
+        if self.real == 0 and self.imag == 0:
+            return "0"
+
+        parts = []
+        if self.real != 0:
+            parts.append(f"{self.real}")
+
+        if self.imag != 0:
+            imag_abs = abs(self.imag)
+            imag_str = "i" if imag_abs == 1 else f"{imag_abs} i"
+            if parts:
+                sign = " + " if self.imag > 0 else " - "
+                parts.append(f"{sign}{imag_str}")
+            else:
+                sign = "-" if self.imag < 0 else ""
+                parts.append(f"{sign}{imag_str}")
+
+        return "".join(parts)
 
 class GUI:
     """ 
@@ -117,27 +103,20 @@ class GUI:
             and starts the GUI mainloop.
         """
         window = Tk()
-        window.title("Rational Numbers")
-        window.geometry("300x180")
+        window.title("Complex Numbers")
+        window.geometry("190x180")
        
         # Labels and entries for the first complex rational number
         frame1 = Frame(window)
         frame1.grid(row = 1, column = 1, pady = 10)
 
-        Label(frame1, text = "Rational 1:").pack(side = LEFT)
-        self.rational1Numerator = StringVar()
-        Entry(frame1, width = 4, textvariable = self.rational1Numerator, 
+        Label(frame1, text = "Complex 1:").pack(side = LEFT)
+        self.complex1Real = StringVar()
+        Entry(frame1, width = 4, textvariable = self.complex1Real, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
         Label(frame1, text = "+").pack(side = LEFT)
-        Entry(frame1, width = 4, textvariable = self.rational1Numerator, 
-              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
-        Label(frame1, text = "i").pack(side = LEFT)
-        Label(frame1, text = "/").pack(side = LEFT)
-        self.rational1Denominator = StringVar()
-        Entry(frame1, width = 4, textvariable = self.rational1Denominator, 
-              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
-        Label(frame1, text = "+").pack(side = LEFT)
-        Entry(frame1, width = 4, textvariable = self.rational1Denominator, 
+        self.complex1Imag = StringVar()
+        Entry(frame1, width = 4, textvariable = self.complex1Imag, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
         Label(frame1, text = "i").pack(side = LEFT)
         
@@ -145,23 +124,16 @@ class GUI:
         frame2 = Frame(window)
         frame2.grid(row = 3, column = 1, pady = 10)
         Label(frame2, text = "Rational 2:").pack(side = LEFT)
-        self.rational2Numerator = StringVar()
-        Entry(frame2, width = 4, textvariable = self.rational2Numerator, 
+        self.complex2Real = StringVar()
+        Entry(frame2, width = 4, textvariable = self.complex2Real, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
         Label(frame2, text = "+").pack(side = LEFT)
-        Entry(frame2, width = 4, textvariable = self.rational2Numerator, 
-              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
-        Label(frame2, text = "i").pack(side = LEFT)
-        Label(frame2, text = "/").pack(side = LEFT)
-        self.rational2Denominator = StringVar()
-        Entry(frame2, width = 4, textvariable = self.rational2Denominator, 
-              justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
-        Label(frame2, text = "+").pack(side = LEFT)
-        Entry(frame2, width = 4, textvariable = self.rational2Numerator, 
+        self.complex2Imag = StringVar()
+        Entry(frame2, width = 4, textvariable = self.complex2Imag, 
               justify = RIGHT, font=('Calibri 13')).pack(side = LEFT)
         Label(frame2, text = "i").pack(side = LEFT)
         
-        # Labels and entries for the result rational number
+        # Labels and entries for the result complex number
         # an entry widget is used as the output here
         frame3 = Frame(window)
         frame3.grid(row = 4, column = 1, pady = 10)
@@ -185,37 +157,42 @@ class GUI:
         mainloop()
         
     def add(self): 
-        (rational1, rational2) = self.getBothRational()
-        result = rational1.add(rational2)
+        (complex1, complex2) = self.getBothComplex()
+        result = complex1.add(complex2)
         self.result.set(result.toString())
     
     def subtract(self):
-        (rational1, rational2) = self.getBothRational()
-        result = rational1.subtract(rational2)
-        self.result.set(result.toString())
+        (complex1, complex2) = self.getBothComplex()
+        if complex1 != None and complex2 != None:
+            result = complex1.subtract(complex2)
+            self.result.set(result.toString())
     
     def multiply(self):
-        (rational1, rational2) = self.getBothRational()
-        result = rational1.multiply(rational2)
+        (complex1, complex2) = self.getBothComplex()
+        result = complex1.multiply(complex2)
         self.result.set(result.toString())
     
     def divide(self):
-        (rational1, rational2) = self.getBothRational()
-        result = rational1.divide(rational2)
+        (complex1, complex2) = self.getBothComplex()
+        result = complex1.divide(complex2)
         self.result.set(result.toString())
 
-    def getBothRational(self):
+    def getBothComplex(self):
         """ Helper method used by add, subtract, multiply and divide methods """
-        try:
-            numerator1 = eval(self.rational1Numerator.get())
-            denominator1 = eval(self.rational1Denominator.get())
-            rational1 = Rational(numerator1, denominator1)
+        def get_entry(entry: StringVar) -> float:
+            text = entry.get().strip()
+            return 0 if text == "" else eval(text)
 
-            numerator2 = eval(self.rational2Numerator.get())
-            denominator2 = eval(self.rational2Denominator.get())
-            rational2 = Rational(numerator2, denominator2)
-            return (rational1, rational2)
+        try:
+            real1 = get_entry(self.complex1Real)
+            imag1 = get_entry(self.complex1Imag)
+            complex1 = ComplexNumber(real1, imag1)
+
+            real2 = get_entry(self.complex2Real)
+            imag2 = get_entry(self.complex2Imag)
+            complex2 = ComplexNumber(real2, imag2)
+            return (complex1, complex2)
         except:
-            return(Rational(0,0), Rational(0,0)) #if an entry value is missing, cause NaN
+            return (ComplexNumber(0, 0), ComplexNumber(0, 0))
 
 if __name__ == "__main__": GUI()
