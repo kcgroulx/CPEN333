@@ -1,6 +1,8 @@
 #student name: Kyle Groulx
 #student number: 95104774
 
+import multiprocessing
+
 def checkList(list_to_check: list) -> bool:
     """
     param list_to_check: a list
@@ -142,12 +144,25 @@ if __name__ == "__main__":
               [2, 8, 5, 4, 7, 3, 9, 1, 6]
             ]
     
-    testcase = test1   #modify here for other testcases
+    testcase = test2   #modify here for other testcases
     SIZE = 9
 
+    processes = []
+
     for col in range(SIZE):  #checking all columns
-        checkColumn(testcase, col)
+        process = multiprocessing.Process(target=checkColumn, args=(testcase, col))
+        processes.append(process)
+        process.start()
+
     for row in range(SIZE):  #checking all rows
-        checkRow(testcase, row)
+        process = multiprocessing.Process(target=checkRow, args=(testcase, row))
+        processes.append(process)
+        process.start()
+
     for subgrid in range(SIZE):   #checking all subgrids
-        checkSubgrid(testcase, subgrid)
+        process = multiprocessing.Process(target=checkSubgrid, args=(testcase, subgrid))
+        processes.append(process)
+        process.start()
+
+    for process in processes:
+        process.join()
