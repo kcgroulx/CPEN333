@@ -36,7 +36,6 @@ def merge_sort(arr):
 
     return result
 
-
 def sortingWorker(firstHalf: bool) -> None:
     """
        If param firstHalf is True, the method
