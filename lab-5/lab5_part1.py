@@ -52,6 +52,11 @@ def producer() -> None:
         item = waitForItemToBeProduced()  #wait for an item to be produced
         print(f"DEBUG: {item} produced")
         #complete the function below here to correctly store the item in the circular buffer
+        empty.acquire()
+        mutex.acquire()
+        buffer.insert(item)
+        mutex.release()
+        full.release()
 
 
 def consumer() -> None:
@@ -65,6 +70,11 @@ def consumer() -> None:
         
     for _ in range(SIZE * 2): #we just consume twice the buffer size for testing
         #write the code below to correctly remove an item from the circular buffer
+        full.acquire()
+        mutex.acquire()
+        item = buffer.remove()
+        mutex.release()
+        empty.release()
 
         #end of your implementation for this function
         #use the following code as is
@@ -82,3 +92,11 @@ if __name__ == "__main__":
     mutex = threading.Lock()  #lock for protecting data on insertion or removal
 
     #complete the producer-consumer thread creation below
+    producerThread = threading.Thread(target=producer)
+    consumerThread = threading.Thread(target=consumer)
+
+    producerThread.start()
+    consumerThread.start()
+
+    producerThread.join()
+    consumerThread.join()
